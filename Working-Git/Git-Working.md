@@ -1,4 +1,3 @@
-
 # How Git Works Under the Hood ?
 
 * Git is a **content-addressable key–value store** (object database).
