@@ -1,7 +1,3 @@
-Below is a **clean, structured technical document** consolidating everything from the discussion into a single reference.
-
----
-
 # Identity & Service Management: macOS vs Linux
 
 ## 1. Conceptual Layers
