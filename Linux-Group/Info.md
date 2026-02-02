@@ -116,18 +116,6 @@ unzip a.zip
 tar -xvzf a.tar.gz
 ```
 
-**scp** – copy over SSH
-
-```md
-scp file.txt user@1.2.3.4:/tmp
-```
-
-**rsync** – sync files
-
-```md
-rsync -av dir/ user@host:/backup/
-```
-
 ---
 
 ## WHAT IS net-tools
