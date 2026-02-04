@@ -279,8 +279,14 @@ docker info
 # Run test container
 docker run hello-world
 
+# Run docker
+sudo systemctl start docker
+
 # Check if daemon is running
 sudo systemctl status docker
+
+# Stop docker 
+sudo systemctl stop docker
 ```
 
 ## Common Post-Installation Issues

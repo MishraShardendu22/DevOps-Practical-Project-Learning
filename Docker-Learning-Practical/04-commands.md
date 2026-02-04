@@ -661,5 +661,3 @@ This reference covers all essential Docker commands for:
 - Monitoring and debugging
 - Resource management
 - Network and volume operations
-
-Practice these commands to become proficient with Docker!
