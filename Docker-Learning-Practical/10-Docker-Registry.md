@@ -33,7 +33,7 @@ docker tag myapp registry.example.com/myapp:v1.0
 docker push <repository-name>:<tag>
 ```
 
-### Examples - 1
+### Examples
 
 ```bash
 # Push to Docker Hub

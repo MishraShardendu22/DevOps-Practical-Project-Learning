@@ -36,44 +36,52 @@ docker network create <network-name> -d <driver-name>
 docker network inspect <network-name>
 ```
 
+## Network Drivers Explained
+
+### Bridge (Default)
+- Creates private internal network on host
+- Containers can communicate via IP or container name
+- Isolated from host network
+- Best for standalone containers on single host
+
+### User-Defined Bridge
+- Custom bridge network with enhanced features
+- Automatic DNS resolution by container name
+- Better isolation control
+- Can be connected/disconnected on the fly
+
+### Host
+- Container shares host's network stack
+- No network isolation
+- Better performance (no NAT overhead)
+- Use for performance-critical applications
+
+### None
+- Completely disables networking
+- Maximum isolation
+- Use for security-sensitive containers that don't need network access
+
+## Advanced Commands
+
+### Connect Container to Network
+```bash
+docker network connect <network-name> <container-name>
+```
+
+### Disconnect Container from Network
+```bash
+docker network disconnect <network-name> <container-name>
+```
+
+### Remove Network
+```bash
+docker network rm <network-name>
+```
+
 ## Best Practices
 
-- Use user-defined bridge networks for better container isolation
-- Use host network for performance-critical applications
+- Use user-defined bridge networks for better container isolation and DNS
+- Use host network sparingly (only for performance-critical applications)
 - Use none network for security-sensitive containers that don't need network access
-
-```md
-
-# Search for Networks
-
-mishrashardendu22@fedora:~$ docker search mongo
-NAME                               DESCRIPTION                                     STARS     OFFICIAL
-mongo                              MongoDB document databases provide high avai…   10693     [OK]
-circleci/mongo                     CircleCI images for MongoDB                     16        
-corpusops/mongo                    https://github.com/corpusops/docker-images/     0         
-rootpublic/mongo                                                                   0         
-uselagoon/mongo                                                                    0         
-ekesken/mongo                      docker image for mongo that is configurable …   1         
-vepo/mongo                         Mongo image with default settings               1         
-litmuschaos/mongo                                                                  1         
-jelastic/mongo                     An image of the MongoDB database server main…   0         
-arm64v8/mongo                      MongoDB document databases provide high avai…   37        
-zinobe/mongo                       mongo with custom user                          0         
-s390x/mongo                        MongoDB document databases provide high avai…   1         
-kubedb/mongo                                                                       0         
-amd64/mongo                        MongoDB document databases provide high avai…   0         
-cescoferraro/mongo                 docker alpine mongo                             0         
-ccitest/mongo                      CircleCI test images for Mongo                  0         
-sacashgit/mongo                                                                    0         
-excellalabs/mongo                  Dockerfile and scripts to setup a production…   2         
-winamd64/mongo                     MongoDB document databases provide high avai…   1         
-mongodb/mongodb-community-server   The Official MongoDB Community Server           176       
-healthcheck/mongo                  https://github.com/docker-library/healthchec…   5         
-mongodb/mongodb-atlas-local        Create, manage, and automate MongoDB Atlas L…   10        
-pagarme/mongo                                                                      0         
-pastvu/mongo                                                                       0         
-sscpac/mongo                       alpine mongo                                    0         
-mishrashardendu22@fedora:~$ 
-
-
-```
+- Name your networks descriptively for easier management
+- Clean up unused networks regularly with `docker network prune`
