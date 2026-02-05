@@ -1,0 +1,31 @@
+services:
+  mongo-db:
+    image: mongo:latest
+    container_name: mongo-db
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD","mongosh","--eval","db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  api:
+    image: shardendumishra22/dragon-ball:latest
+    container_name: dragon-api
+    ports:
+      - "4000:4000"
+    environment:
+      MONGO_URI: mongodb://mongo-db:27017/dragonball
+      JWT_SECRET: your-secret-key-here
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: your-secure-password
+      PORT: 4000
+    depends_on:
+      mongo-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
