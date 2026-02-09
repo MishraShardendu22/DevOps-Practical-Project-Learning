@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod 
+metadata:
+ name: nginx-pod
+ namespace: nginx
+spec:
+ containers:
+ - name: nginx-container
+   image: nginx:latest	
+
+
+# So basically pod is the smallest deployable unit in k8s.
+# It is also the smallest unit that is controlled by k8s.
+# It is basically a linux machine that can have one or more containers running inside it.
+# apiVersion is whatever we decide to use,
+# kind is bascailly the type of resource we want to create, in this case it is a pod.
+# metadata is basically the information about the resource we want to create.
+# name is the name of the resource we want to create, in this case it is nginx-pod.
+# namespace is basically the logical partition of the cluster, it is used to group resources together.
+# spec is basically the specification of the resource we want to create.
+# containers is basically the list of containers we want to run inside the pod.
+# name is the name of the container we want to run, in this case it is nginx-container.
+# image is the image we want to use for the container, in this case it is nginx:latest.
