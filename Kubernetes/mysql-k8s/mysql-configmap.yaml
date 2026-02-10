@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: nginx
+data:
+  MYSQL_DATABASE: mydatabase
+  MYSQL_USER: mysqluser
+  # MySQL Configuration Parameters
+  max_connections: "200"
+  innodb_buffer_pool_size: "256M"
+  character_set_server: "utf8mb4"
+  collation_server: "utf8mb4_unicode_ci"

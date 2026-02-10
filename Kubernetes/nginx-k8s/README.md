@@ -1,4 +1,6 @@
-### Interview Questions:
+# Nginx Deployment in Kubernetes
+
+## Interview Questions and Answers -
 
 1. **Explain the role of a Kubernetes Pod when deploying an Nginx web server.**
 
