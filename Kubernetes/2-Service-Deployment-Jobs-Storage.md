@@ -166,15 +166,193 @@ Controller for **stateful applications** requiring identity + storage.
 
 ---
 
-job - one time task
-cronJobs 
+Below is a **clean, real-world Kubernetes example** using:
 
-(backup using volumes and cron jobs code that)
+* **Namespace**
+* **PV + PVC**
+* **Job (one-time backup)**
+* **CronJob (scheduled backup)**
+* **Service (expose pod)**
+* **Dummy backup script (prints + writes to volume)**
+
+Everything is scoped to **one proper namespace**.
 
 ---
-volume and volume persistance 
 
-no namespace to not make it local to anamespace 
-claiming the volume using pvc and pv
+## 1️⃣ Namespace
 
-to show a pod to outer world we have to make a service 
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: backup-ns
+```
+
+---
+
+## 2️⃣ PersistentVolume (PV)
+
+Cluster-level object (not namespaced).
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: backup-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /tmp/backup-data
+```
+
+---
+
+## 3️⃣ PersistentVolumeClaim (PVC)
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backup-pvc
+  namespace: backup-ns
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+---
+
+## 4️⃣ Job (one-time backup task)
+
+Runs **once**, writes to volume.
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backup-job
+  namespace: backup-ns
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: backup
+        image: busybox
+        command:
+          - sh
+          - -c
+          - |
+            echo "Running one-time backup"
+            date >> /data/backup.log
+            echo "Backup complete"
+        volumeMounts:
+        - name: backup-vol
+          mountPath: /data
+      volumes:
+      - name: backup-vol
+        persistentVolumeClaim:
+          claimName: backup-pvc
+```
+
+---
+
+## 5️⃣ CronJob (scheduled backup)
+
+Runs **every minute** (for demo).
+
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-cron
+  namespace: backup-ns
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: backup
+            image: busybox
+            command:
+              - sh
+              - -c
+              - |
+                echo "Running scheduled backup"
+                date >> /data/cron-backup.log
+            volumeMounts:
+            - name: backup-vol
+              mountPath: /data
+          volumes:
+          - name: backup-vol
+            persistentVolumeClaim:
+              claimName: backup-pvc
+```
+
+---
+
+## 6️⃣ Pod exposed via Service
+
+Dummy pod + service to show **pod → outside world**.
+
+### Pod
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backup-viewer
+  namespace: backup-ns
+  labels:
+    app: viewer
+spec:
+  containers:
+  - name: viewer
+    image: busybox
+    command: ["sh", "-c", "while true; do nc -l -p 8080 -e cat /data/backup.log; done"]
+    volumeMounts:
+    - name: backup-vol
+      mountPath: /data
+  volumes:
+  - name: backup-vol
+    persistentVolumeClaim:
+      claimName: backup-pvc
+```
+
+### Service
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: backup-service
+  namespace: backup-ns
+spec:
+  selector:
+    app: viewer
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP
+```
+
+---
+
+## Mental model (lock this in)
+
+* **Job** → run once
+* **CronJob** → run on schedule
+* **PV** → real storage
+* **PVC** → claim storage
+* **VolumeMount** → container uses storage
+* **Service** → expose pod

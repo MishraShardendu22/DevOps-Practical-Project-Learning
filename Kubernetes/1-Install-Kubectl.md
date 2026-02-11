@@ -81,7 +81,7 @@ kind create cluster
 
 `minikube` runs a **single‑node Kubernetes cluster** using a VM or container driver.
 
-### Install
+### Install (minikube binary) -
 
 ```bash
 curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
@@ -198,7 +198,7 @@ sudo kubeadm init --pod-network-cidr=10.244.0.0/16
 
 Wait until:
 
-```
+```md
 Your Kubernetes control-plane has initialized successfully!
 ```
 
